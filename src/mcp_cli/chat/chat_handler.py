@@ -14,7 +14,7 @@ from mcp_cli.ui.ui_helpers import display_welcome_banner, clear_screen
 # Import StreamManager (now mandatory)
 from mcp_cli.stream_manager import StreamManager
 
-async def handle_chat_mode(stream_manager, provider="openai", model="gpt-4o-mini"):
+async def handle_chat_mode(stream_manager, provider="openai", model="gpt-4o-mini", system_prompt=None):
     """
     Enter chat mode with multi-call support for autonomous tool chaining.
     
@@ -31,7 +31,7 @@ async def handle_chat_mode(stream_manager, provider="openai", model="gpt-4o-mini
         #clear_screen()
         
         # Initialize chat context with StreamManager
-        chat_context = ChatContext(stream_manager, provider, model)
+        chat_context = ChatContext(stream_manager, provider, model, system_prompt)
         
         if not await chat_context.initialize():
             return False

@@ -2,6 +2,7 @@ from base64 import b64decode
 import os
 import logging
 import json
+import sys
 import uuid
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
@@ -12,6 +13,8 @@ from google.genai import types
 from mcp_cli.llm.providers.base import BaseLLMClient 
 
 load_dotenv()
+
+logging.getLogger().setLevel(logging.DEBUG)
 
 class GeminiLLMClient(BaseLLMClient):
     def __init__(self, model="gemini-2.0-flash", api_key=None): 
@@ -25,7 +28,7 @@ class GeminiLLMClient(BaseLLMClient):
         logging.info(f"GeminiLLMClient initialized with model: {self.model}")
 
     def create_completion(self, messages: List[Dict], tools: Optional[List] = None) -> Dict[str, Any]:
-        logging.warning(f"Creating completion with messages: {messages}, tools: {tools}")
+        logging.debug(f"Creating completion with messages: {messages}, tools: {tools}")
         try:
             system_instruction_content = None
             gemini_messages = []

@@ -15,7 +15,7 @@ def ping_command(
 ):
     """Simple ping command."""
     from mcp_cli.cli_options import process_options
-    servers, user_specified, server_names = process_options(server, disable_filesystem, provider, model, config_file)
+    servers, user_specified, server_names, _ = process_options(server, disable_filesystem, provider, model, config_file)
     run_command(ping.ping_run, config_file, servers, user_specified, {"server_names": server_names})
     return 0
 
@@ -25,11 +25,17 @@ def chat_command(
     provider: str = "openai",
     model: str = None,
     disable_filesystem: bool = False,
+    system_prompt: str = None
 ):
     """Start a chat session."""
     from mcp_cli.cli_options import process_options
-    servers, user_specified, server_names = process_options(server, disable_filesystem, provider, model, config_file)
-    run_command(chat.chat_run, config_file, servers, user_specified, {"server_names": server_names})
+    servers, user_specified, server_names, system_prompt = process_options(server, disable_filesystem, provider, model, config_file, system_prompt)
+    extra_params = { 
+        "system_prompt": system_prompt,
+        "server_names": server_names
+    }
+    
+    run_command(chat.chat_run, config_file, servers, user_specified, extra_params)
     return 0
 
 def interactive_command(
@@ -38,10 +44,11 @@ def interactive_command(
     provider: str = "openai",
     model: str = None,
     disable_filesystem: bool = False,
+    system_prompt: str = None,
 ):
     """Enter interactive mode with a command prompt."""
     from mcp_cli.cli_options import process_options
-    servers, user_specified, server_names = process_options(server, disable_filesystem, provider, model, config_file)
+    servers, user_specified, server_names, system_prompt = process_options(server, disable_filesystem, provider, model, config_file, system_prompt)
     # Remove extra parameter "server_names" since interactive_mode does not expect it.
     run_command(interactive.interactive_mode, config_file, servers, user_specified)
     return 0
@@ -114,7 +121,7 @@ def cmd_command(
 ):
     """Command mode for scriptable usage."""
     from mcp_cli.cli_options import process_options
-    servers, user_specified, server_names = process_options(server, disable_filesystem, provider, model, config_file)
+    servers, user_specified, server_names, system_prompt = process_options(server, disable_filesystem, provider, model, config_file, system_prompt)
     
     # Merge server_names with other extra parameters
     extra_params = {

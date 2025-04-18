@@ -13,7 +13,7 @@ from mcp_cli.chat.chat_handler import handle_chat_mode
 app = typer.Typer(help="Chat commands")
 
 @app.command("run")
-async def chat_run(stream_manager, server_names=None):
+async def chat_run(stream_manager, server_names=None, system_prompt=None):
     """
     Enter chat mode.
     
@@ -36,7 +36,8 @@ async def chat_run(stream_manager, server_names=None):
         chat_task = asyncio.create_task(handle_chat_mode(
             stream_manager, 
             provider, 
-            model
+            model,
+            system_prompt
         ))
         
         # Await the task with proper exception handling

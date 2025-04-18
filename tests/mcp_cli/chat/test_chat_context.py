@@ -51,6 +51,10 @@ def dummy_stream_manager():
 def chat_context(dummy_stream_manager):
     return ChatContext(stream_manager=dummy_stream_manager, provider="dummy_provider", model="dummy_model")
 
+@pytest.fixture
+def chat_context_with_system_prompt(dummy_stream_manager):
+    return ChatContext(stream_manager=dummy_stream_manager, provider="dummy_provider", model="dummy_model", system_prompt="Mock system prompt")
+
 @pytest.mark.asyncio
 async def test_initialize_chat_context(chat_context):
     # Call initialize and verify that the context is set up correctly.
@@ -70,6 +74,12 @@ async def test_initialize_chat_context(chat_context):
 
     expected_client = dummy_get_llm_client("dummy_provider", "dummy_model")
     assert chat_context.client == expected_client
+    
+@pytest.mark.asyncio
+async def test_initialize_chat_context_with_system_prompt(chat_context_with_system_prompt):
+    await chat_context_with_system_prompt.initialize()
+    assert chat_context_with_system_prompt.conversation_history[0]["role"] == "system"
+    assert chat_context_with_system_prompt.conversation_history[0]["content"] == "Mock system prompt"
 
 @pytest.mark.asyncio
 async def test_get_server_for_tool(chat_context):

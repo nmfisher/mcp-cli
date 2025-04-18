@@ -15,7 +15,7 @@ from mcp_cli.stream_manager import StreamManager
 class ChatContext:
     """Class to manage the chat context and state."""
     
-    def __init__(self, stream_manager, provider="openai", model="gpt-4o-mini"):
+    def __init__(self, stream_manager, provider="openai", model="gpt-4o-mini", system_prompt=None):
         """
         Initialize the chat context.
         
@@ -29,6 +29,7 @@ class ChatContext:
         self.model = model
         self.exit_requested = False
         self.conversation_history = []
+        self.system_prompt = system_prompt
         
         # Initialize the client right away to ensure it's never None
         self.client = get_llm_client(provider=self.provider, model=self.model)
@@ -53,7 +54,7 @@ class ChatContext:
             # Don't exit - we can still chat without tools
             
         # Generate system prompt using the internal (namespaced) tools for LLM
-        system_prompt = generate_system_prompt(self.internal_tools)
+        system_prompt = self.system_prompt or generate_system_prompt(self.internal_tools)
         
         # Convert internal tools to OpenAI format
         self.openai_tools = convert_to_openai_tools(self.internal_tools)

@@ -97,7 +97,8 @@ def test_chat_command():
             server="server1",
             provider="test-provider",
             model="test-model",
-            disable_filesystem=True
+            disable_filesystem=True,
+            system_prompt="Mock system prompt"
         )
         
         # Verify process_options was called with the right arguments
@@ -111,7 +112,7 @@ def test_chat_command():
         assert mock_run_command.call_args[0][1] == "test_config.json"
         assert mock_run_command.call_args[0][2] == ["server1"]
         assert mock_run_command.call_args[0][3] == ["server1"]
-        assert mock_run_command.call_args[0][4] == {"server_names": {"0": "Server1"}}
+        assert mock_run_command.call_args[0][4] == {"server_names": {"0": "Server1"}, "system_prompt":"Mock system prompt"}
         
         # Verify the return value
         assert result == 0

@@ -52,7 +52,7 @@ def extract_server_names(config, specified_servers=None):
     
     return server_names
 
-def process_options(server, disable_filesystem, provider, model, config_file="server_config.json"):
+def process_options(server, disable_filesystem, provider, model, config_file="server_config.json", system_prompt=None):
     """
     Process CLI options to produce a list of server names and set environment variables.
     """
@@ -61,7 +61,7 @@ def process_options(server, disable_filesystem, provider, model, config_file="se
     server_names = {}
     
     # Add debug logging
-    logging.debug(f"Processing options: server={server}, disable_filesystem={disable_filesystem}")
+    logging.debug(f"Processing options: server={server}, disable_filesystem={disable_filesystem}, system_prompt={system_prompt}")
     
     if server:
         # Allow comma-separated servers.
@@ -88,4 +88,15 @@ def process_options(server, disable_filesystem, provider, model, config_file="se
     # Extract server names from the configuration
     server_names = extract_server_names(config, user_specified)
     
-    return servers_list, user_specified, server_names
+    # 
+    if system_prompt:
+        try:
+            system_prompt_path = os.path.normpath(system_prompt)
+            if os.path.exists(system_prompt_path):
+                with open(system_prompt_path, "r") as infile:
+                    system_prompt = infile.read()
+        except:
+            logging.error(f"Failed to read system prompt from file")
+
+    
+    return servers_list, user_specified, server_names, system_prompt

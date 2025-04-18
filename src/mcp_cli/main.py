@@ -87,6 +87,7 @@ def common_options(
     provider: str = "openai",
     model: str = None,
     disable_filesystem: bool = True,
+    system_prompt: str = None,
     logging_level: str = typer.Option(
         "WARNING",
         help="Set the logging level. Options: DEBUG, INFO, WARNING, ERROR, CRITICAL"
@@ -106,7 +107,7 @@ def common_options(
     logging.debug(f"Logging level set to {logging_level.upper()}")
 
     # Process options to get servers and related configuration.
-    servers, user_specified, server_names = process_options(server, disable_filesystem, provider, model, config_file)
+    servers, user_specified, server_names, system_prompt = process_options(server, disable_filesystem, provider, model, config_file, system_prompt)
     
     # Set the context.
     ctx.obj = {
@@ -114,6 +115,7 @@ def common_options(
         "servers": servers,
         "user_specified": user_specified,
         "server_names": server_names,
+        "system_prompt": system_prompt
     }
     
     # If no subcommand was invoked, launch chat mode.
@@ -125,6 +127,7 @@ def common_options(
             provider=provider,
             model=model,
             disable_filesystem=disable_filesystem,
+            system_prompt=system_prompt
         )
         restore_terminal()
         raise typer.Exit()
